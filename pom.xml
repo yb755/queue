@@ -25,5 +25,7 @@
   <modules>
   	<module>queue-service</module>
   	<module>queue-rabbitmq</module>
+  	<module>queue-test</module>
+  	<module>queue-kafka</module>
   </modules>
 </project>
