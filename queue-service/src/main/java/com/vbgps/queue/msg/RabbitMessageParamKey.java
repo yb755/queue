@@ -1,10 +1,6 @@
 package com.vbgps.queue.msg;
 
 public enum RabbitMessageParamKey {
-	
-	RABBIT_EXCHANGE("rabbit_exchange"),
-	
-	RABBIT_ROUTE_KEY("rabbit_route_key"),
 
 	RABBIT_CONTENT_TYPE("rabbit_content_type"),
 
