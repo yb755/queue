@@ -1,29 +1,21 @@
 package com.vbgps.queue.msg;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Message<T extends Serializable> {
 
-	private String topic;
-
-	private String key;
+	private Map<String, Object> params = new HashMap<String, Object>();
 
 	private T msg;
 
-	public String getTopic() {
-		return topic;
+	public Map<String, Object> getParams() {
+		return params;
 	}
 
-	public void setTopic(String topic) {
-		this.topic = topic;
-	}
-
-	public String getKey() {
-		return key;
-	}
-
-	public void setKey(String key) {
-		this.key = key;
+	public void setParams(Map<String, Object> params) {
+		this.params = params;
 	}
 
 	public T getMsg() {

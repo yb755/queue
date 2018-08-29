@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+        http://www.springframework.org/schema/rabbit
+      http://www.springframework.org/schema/rabbit/spring-rabbit-1.5.xsd">
+
+	<rabbit:connection-factory id="connectionFactory" host="${rabbit.hosts}" port="${rabbit.port}" virtual-host="${rabbit.vhost}"
+		username="${rabbit.username}" password="${rabbit.password}" connection-timeout="${rabbit.timeout}" requested-heartbeat="${rabbit.heartbeat}"/>
+		
+	<rabbit:admin connection-factory="connectionFactory" id="rabbitAdmin"/>
+	
+	<rabbit:direct-exchange name="global_ex" durable="${rabbit.durable}" declared-by="rabbitAdmin">
+		<rabbit:bindings>
+			<rabbit:binding queue="${common.default.queue}" key="global_route" />
+		</rabbit:bindings>
+	</rabbit:direct-exchange>
+	
+	<rabbit:queue durable="${rabbit.durable}" name="${common.default.queue}" declared-by="rabbitAdmin">
+		<rabbit:queue-arguments>
+			<entry key="x-ha-policy" value="all" />
+		</rabbit:queue-arguments>
+	</rabbit:queue>
+	
+	<rabbit:template exchange="global_ex" id="amqpTemplate" connection-factory="connectionFactory" routing-key="global_route" message-converter="messageConvertor"/>
+    
+    <rabbit:listener-container connection-factory="connectionFactory" acknowledge="auto" task-executor="gatewayTaskExecutor" concurrency="${rabbit.concurrency}" message-converter="messageConvertor" advice-chain="gateWayRetryInterceptor">
+		<rabbit:listener queues="${rabbit.queue.renew.order.status.data}" ref="renewReceiver" method="handlerOrderStatus"/>
+		<rabbit:listener queues="${rabbit.queue.install.technician.device.data}" ref="orderDeviceReceiver" method="processMessage"/>
+	</rabbit:listener-container>
+    	
+	<bean id="messageConvertor" class="com.vbgps.queue.rabbitmq.converter.CustomerMessageConverter"></bean>
+	
+	<bean id="messageSender" class="com.by.service.loan.mq.SenderServiceImpl">
+       <property name="amqpTemplate" ref="amqpTemplate"></property>
+    </bean>
+</beans>
