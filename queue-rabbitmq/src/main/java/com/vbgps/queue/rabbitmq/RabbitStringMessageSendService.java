@@ -1,11 +1,11 @@
-package com.vbgps.queue.kafka;
+package com.vbgps.queue.rabbitmq;
 
 import java.nio.charset.Charset;
 
 import com.vbgps.queue.StringMessageSendService;
 import com.vbgps.queue.msg.Message;
 
-public class KafkaStringMessageSendService extends KafkaMessageSendService implements StringMessageSendService {
+public class RabbitStringMessageSendService extends RabbitMessageSendService implements StringMessageSendService {
 
 	@Override
 	public void sendMessage(Message<String> msg, String charset) {
@@ -16,7 +16,6 @@ public class KafkaStringMessageSendService extends KafkaMessageSendService imple
 	@Override
 	public void sendMessage(Message<String> msg) {
 		sendMessage(msg, "utf-8");
-
 	}
 
 }
